@@ -45,7 +45,6 @@ def delete_mail(mail_id: str) -> bool:
             mail.pop(i)
             save_mail(mail)
             return True
-
     return False
 
 def get_mail(mail_id: str) -> Optional[Dict[str, str]]:
@@ -107,7 +106,15 @@ def delete_mail_route(mail_id: str):
         bool: True if the mail was deleted, False otherwise
     """
     # TODO: implement this function
-    pass # remove this line
+    deleted = delete_mail(mail_id)
+    if deleted:
+        res = jsonify({"deleted": True, "mail_id": mail_id})
+        res.status_code = 200
+        return res
+    else:
+        res = jsonify({"deleted": False, "error": "Mail not found",  "mail_id": mail_id})
+        res.status_code = 404
+        return res
 
 @app.route('/mail/<mail_id>', methods=['GET'])
 def get_mail_route(mail_id: str):
@@ -142,6 +149,14 @@ def get_inbox_route(recipient: str):
 # TODO: implement a rout e to get all mail entries for a sender
 # HINT: start with soemthing like this:
 #   @app.route('/mail/sent/<sender>', ...)
+
+@app.route('/mail/sent/<sender>', methods=['GET'])
+def get_sent_route(sender: str):
+    sent = get_sent(sender)
+    res = jsonify(sent)
+    res.status_code = 200
+    return res
+
 
 
 if __name__ == '__main__':
